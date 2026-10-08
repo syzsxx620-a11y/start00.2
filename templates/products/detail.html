@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}{{ product.name }} — ExportMall{% endblock %}
+{% block content %}
+<div class="product-detail">
+  <div class="product-gallery">
+    {% if images %}
+      {% for img in images %}
+        <img src="{{ img.image.url }}" alt="{{ img.alt|default:product.name }}">
+      {% endfor %}
+    {% else %}
+      <div class="placeholder placeholder-lg">{{ product.name|slice:":1" }}</div>
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <div class="card-category">{{ product.category.name|default:"Uncategorized" }}</div>
+    <h1>{{ product.name }}</h1>
+    <p class="sku">SKU: {{ product.sku }}</p>
+    <div class="card-price price-lg">
+      {% money product.price %}
+      {% if product.compare_at_price %}<span class="price-was">{% money product.compare_at_price %}</span>{% endif %}
+    </div>
+    <p class="short">{{ product.short_description }}</p>
+    {% if product.description %}<div class="description">{{ product.description|linebreaks }}</div>{% endif %}
+
+    {% if product.in_stock %}
+      <p class="stock stock-in">In stock: {{ product.stock }}</p>
+      <form method="post" action="{% url 'cart:add' product.id %}" class="add-form">
+        {% csrf_token %}
+        <label for="qty">Quantity</label>
+        <input type="number" id="qty" name="quantity" value="1" min="1" max="{{ product.stock }}">
+        <button type="submit" class="btn btn-primary">Add to Cart</button>
+      </form>
+    {% else %}
+      <p class="stock stock-out">Out of stock</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if related %}
+<section class="section">
+  <h2 class="section-title">You may also like</h2>
+  <div class="grid">
+    {% for product in related %}
+      {% include "products/_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

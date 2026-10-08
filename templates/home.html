@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}ExportMall — Global Trade{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Source quality products, shipped worldwide</h1>
+  <p>Curated goods for international buyers and wholesale. Multi-currency pricing and global shipping.</p>
+  <a class="btn btn-primary" href="{% url 'products:list' %}">Shop all products</a>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Featured Products</h2>
+  <div class="grid">
+    {% for product in featured %}
+      {% include "products/_card.html" %}
+    {% empty %}
+      <p class="empty">No products yet.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">New Arrivals</h2>
+  <div class="grid">
+    {% for product in new_arrivals %}
+      {% include "products/_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Shop by Category</h2>
+  <div class="grid grid-categories">
+    {% for c in categories %}
+      <a class="category-card" href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

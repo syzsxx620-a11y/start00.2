@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{% if category %}{{ category.name }}{% else %}All Products{% endif %} — ExportMall{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{% if category %}{{ category.name }}{% else %}All Products{% endif %}</h1>
+  {% if q %}<p>Search results for “{{ q }}”</p>{% endif %}
+</div>
+
+<div class="list-toolbar">
+  <form method="get" class="sort-form">
+    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+    <label for="sort">Sort by</label>
+    <select id="sort" name="sort" onchange="this.form.submit()">
+      <option value="" {% if not sort %}selected{% endif %}>Newest</option>
+      <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+      <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+    </select>
+  </form>
+  <span class="count">{{ products|length }} item{{ products|length|pluralize }}</span>
+</div>
+
+<div class="grid">
+  {% for product in products %}
+    {% include "products/_card.html" %}
+  {% empty %}
+    <p class="empty">No products found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

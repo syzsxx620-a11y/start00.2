@@ -1,0 +1,20 @@
+{% load money_tags %}
+<a class="card" href="{{ product.get_absolute_url }}">
+  <div class="card-media">
+    {% if product.main_image %}
+      <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <div class="placeholder">{{ product.name|slice:":1" }}</div>
+    {% endif %}
+    {% if product.compare_at_price %}<span class="tag tag-sale">Sale</span>{% endif %}
+    {% if not product.in_stock %}<span class="tag tag-out">Out of stock</span>{% endif %}
+  </div>
+  <div class="card-body">
+    <div class="card-category">{{ product.category.name|default:"Uncategorized" }}</div>
+    <h3 class="card-title">{{ product.name }}</h3>
+    <div class="card-price">
+      {% money product.price %}
+      {% if product.compare_at_price %}<span class="price-was">{% money product.compare_at_price %}</span>{% endif %}
+    </div>
+  </div>
+</a>

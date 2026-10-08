@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}Order Confirmed — ExportMall{% endblock %}
+{% block content %}
+<div class="confirmation">
+  <h1>Thank you for your order!</h1>
+  <p>Your order has been placed. A confirmation has been sent to <strong>{{ order.email }}</strong>.</p>
+  <div class="order-box">
+    <p>Order number: <strong>{{ order.order_number }}</strong></p>
+    <p>Status: <strong>{{ order.get_status_display }}</strong></p>
+    <p>Total: <strong>{% money order.total %}</strong></p>
+  </div>
+  <p>Use your order number and email to <a href="{% url 'orders:track' %}">track your order</a>.</p>
+  {% if user.is_authenticated %}<p><a href="{% url 'orders:history' %}">View all your orders →</a></p>{% endif %}
+  <a href="{% url 'products:list' %}" class="btn btn-primary">Continue shopping</a>
+</div>
+{% endblock %}

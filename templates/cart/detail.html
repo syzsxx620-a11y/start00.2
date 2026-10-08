@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}Your Cart — ExportMall{% endblock %}
+{% block content %}
+<h1>Your Cart</h1>
+{% if items %}
+<form method="post" action="{% url 'cart:update' %}">
+  {% csrf_token %}
+  <table class="cart-table">
+    <thead>
+      <tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>
+          <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
+          <div class="muted">{{ item.product.sku }}</div>
+        </td>
+        <td>{% money item.product.price %}</td>
+        <td><input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}"></td>
+        <td>{% money item.line_total %}</td>
+        <td>
+          <form method="post" action="{% url 'cart:remove' item.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="cart-actions">
+    <button type="submit" class="btn btn-secondary">Update quantities</button>
+    <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to checkout</a>
+  </div>
+</form>
+<div class="cart-totals">
+  <p>Subtotal: <strong>{% money cart.subtotal %}</strong></p>
+  <a href="{% url 'products:list' %}">← Continue shopping</a>
+</div>
+{% else %}
+<p class="empty">Your cart is empty.</p>
+<a href="{% url 'products:list' %}" class="btn btn-primary">Start shopping</a>
+{% endif %}
+{% endblock %}

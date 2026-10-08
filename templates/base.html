@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ExportMall — Global Trade{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span class="topbar-tagline">Worldwide shipping · multi-currency</span>
+      <div class="topbar-actions">
+        <a href="{% url 'orders:track' %}">Track Order</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'orders:history' %}">My Orders</a>
+          <form method="post" action="{% url 'accounts:logout' %}" class="inline-form">
+            {% csrf_token %}
+            <button type="submit" class="link-btn">Logout ({{ user.username }})</button>
+          </form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Login</a>
+          <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+        <form method="post" action="{% url 'core:set_currency' %}" class="currency-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <select name="currency" onchange="this.form.submit()" aria-label="Currency">
+            {% for c in currencies %}
+              <option value="{{ c.code }}" {% if current_currency and current_currency.code == c.code %}selected{% endif %}>{{ c.code }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{% url 'core:home' %}" class="logo">Export<span>Mall</span></a>
+      <form class="search" method="get" action="{% url 'products:list' %}">
+        <input type="text" name="q" placeholder="Search products…" value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+      </form>
+      <a href="{% url 'cart:detail' %}" class="cart-link">
+        🛒 Cart{% if cart_count %} <span class="badge">{{ cart_count }}</span>{% endif %}
+      </a>
+    </div>
+    <nav class="main-nav">
+      <div class="container nav-inner">
+        <a href="{% url 'products:list' %}">All Products</a>
+        {% for c in nav_categories %}
+          <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+        {% endfor %}
+      </div>
+    </nav>
+  </header>
+
+  {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+        <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© {% now "Y" %} ExportMall — International Trade E-commerce.</p>
+      <p class="muted">Demo storefront. Orders are recorded in USD; prices display in your selected currency.</p>
+    </div>
+  </footer>
+</body>
+</html>

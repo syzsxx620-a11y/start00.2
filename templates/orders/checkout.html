@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}Checkout — ExportMall{% endblock %}
+{% block content %}
+<h1>Checkout</h1>
+<div class="checkout-grid">
+  <form method="post" class="checkout-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <h2>Shipping information</h2>
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {{ field.errors }}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-block">Place order</button>
+  </form>
+
+  <aside class="order-summary">
+    <h2>Order summary</h2>
+    <ul>
+      {% for item in items %}
+        <li>{{ item.product.name }} × {{ item.quantity }} <span>{% money item.line_total %}</span></li>
+      {% endfor %}
+    </ul>
+    <div class="totals">
+      <p>Subtotal <span>{% money subtotal %}</span></p>
+      <p>Shipping <span>{% if shipping_fee %}{% money shipping_fee %}{% else %}Free{% endif %}</span></p>
+      <p class="grand">Total <span>{% money total %}</span></p>
+    </div>
+  </aside>
+</div>
+{% endblock %}

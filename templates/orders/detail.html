@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}Order {{ order.order_number }} — ExportMall{% endblock %}
+{% block content %}
+<h1>Order {{ order.order_number }}</h1>
+<p class="muted">Placed {{ order.created_at|date:"Y-m-d H:i" }} · Status: <strong>{{ order.get_status_display }}</strong></p>
+
+<div class="order-detail-grid">
+  <section>
+    <h2>Items</h2>
+    <table class="cart-table">
+      <thead>
+        <tr><th>Product</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Total</th></tr>
+      </thead>
+      <tbody>
+        {% for item in order.items.all %}
+        <tr>
+          <td>{{ item.product_name }}</td>
+          <td>{{ item.sku }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{% money item.unit_price %}</td>
+          <td>{% money item.line_total %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="totals">
+      <p>Subtotal <span>{% money order.subtotal %}</span></p>
+      <p>Shipping <span>{% if order.shipping_fee %}{% money order.shipping_fee %}{% else %}Free{% endif %}</span></p>
+      <p class="grand">Total <span>{% money order.total %}</span></p>
+    </div>
+  </section>
+
+  <aside>
+    <h2>Shipping address</h2>
+    <p>{{ order.full_name }}{% if order.company %} ({{ order.company }}){% endif %}</p>
+    <p>{{ order.address }}</p>
+    <p>{{ order.city }}{% if order.state %}, {{ order.state }}{% endif %} {{ order.postal_code }}</p>
+    <p>{{ order.country }}</p>
+    <p>{{ order.email }} · {{ order.phone }}</p>
+    {% if order.notes %}<h3>Notes</h3><p>{{ order.notes }}</p>{% endif %}
+  </aside>
+</div>
+{% endblock %}

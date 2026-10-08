@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}Track Order — ExportMall{% endblock %}
+{% block content %}
+<h1>Track your order</h1>
+<form method="post" class="track-form">
+  {% csrf_token %}
+  <div class="field">
+    <label for="order_number">Order number</label>
+    <input type="text" name="order_number" id="order_number" placeholder="FX-YYYYMMDD-XXXXXX">
+  </div>
+  <div class="field">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email">
+  </div>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <button type="submit" class="btn btn-primary">Track order</button>
+</form>
+
+{% if order %}
+<div class="order-box">
+  <h2>Order {{ order.order_number }}</h2>
+  <p>Status: <strong>{{ order.get_status_display }}</strong></p>
+  <p>Placed on: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+  <p>Total: {% money order.total %}</p>
+  <a href="{% url 'orders:detail' order.order_number order.email %}" class="btn btn-secondary">View details</a>
+</div>
+{% endif %}
+{% endblock %}
