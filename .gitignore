@@ -12,6 +12,9 @@ db.sqlite3-journal
 /media/
 /staticfiles/
 
+# Environment / secrets
+.env
+
 # Editor / OS
 .vscode/
 .idea/

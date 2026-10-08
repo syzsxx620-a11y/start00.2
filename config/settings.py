@@ -4,17 +4,29 @@ Django settings for the export e-commerce platform (ExportMall).
 Base currency is USD. Currency conversion rates are stored in the
 `products.Currency` model and can be edited from the admin panel.
 """
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from a local .env file (not committed to git).
+load_dotenv(BASE_DIR / ".env")
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-export-mall-dev-key-change-me-in-production"
+# Override via the SECRET_KEY environment variable (see .env.example).
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-export-mall-dev-key-change-me-in-production",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    h.strip() for h in os.environ.get("ALLOWED_HOSTS", "*").split(",") if h.strip()
+]
 
 # Application definition
 INSTALLED_APPS = [

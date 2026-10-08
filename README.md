@@ -47,6 +47,16 @@ python manage.py runserver
 - 前台商城：http://127.0.0.1:8000/
 - 后台管理：http://127.0.0.1:8000/admin/
 
+## 环境变量（.env）
+
+敏感配置通过环境变量管理，避免写进仓库：
+
+1. 复制 `.env.example` 为 `.env`，填入真实的 `SECRET_KEY`；
+2. `config/settings.py` 启动时会用 `python-dotenv` 自动加载 `.env`；
+3. `.env` 已加入 `.gitignore`，不会被提交到 GitHub。
+
+生成随机密钥：`python -c "import secrets; print(secrets.token_urlsafe(50))"`
+
 ## 关键说明
 
 - **基础货币为 USD**：商品价格、订单金额都以 USD 记录；前台按所选货币显示（`products.Currency` 汇率可后台修改）。
